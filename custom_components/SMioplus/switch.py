@@ -40,6 +40,7 @@ class Relay(SwitchEntity):
         self._port = int(port, 16)
         self._name = name
         self._relay = int(relay)
+        self._stack = int(stack)
     @property
     def name(self):
         """Return the name of the switch"""

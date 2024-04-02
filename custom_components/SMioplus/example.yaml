@@ -1,25 +1,25 @@
 switch:
-  - platform: sequent_microsystems
+  - platform: SMioplus
     name: Relay1
     relay: 1
-  - platform: sequent_microsystems
+  - platform: SMioplus
     name: Relay2
     relay: 2
-  - platform: sequent_microsystems
+  - platform: SMioplus
     name: Relay3
     relay: 3
-  - platform: sequent_microsystems
+  - platform: SMioplus
     name: Relay4
     relay: 4
-  - platform: sequent_microsystems
+  - platform: SMioplus
     name: Relay5
     relay: 5
-  - platform: sequent_microsystems
+  - platform: SMioplus
     name: Relay6
     relay: 6
-  - platform: sequent_microsystems
+  - platform: SMioplus
     name: Relay7
     relay: 7
-  - platform: sequent_microsystems
+  - platform: SMioplus
     name: Relay8
     relay: 8
