@@ -1,0 +1,9 @@
+{
+	"version": "1.0.0",
+	"domain": "SMioplus",
+	"name": "Home automation",
+	"documentation": "TODO",
+	"dependencies": [],
+	"codeownders": [],
+	"requirements": ["SMioplus>=1.0.0"]
+}
