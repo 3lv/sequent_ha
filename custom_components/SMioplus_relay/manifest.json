@@ -1,7 +1,7 @@
 {
 	"version": "1.0.0",
-	"domain": "SMioplus",
-	"name": "Home automation",
+	"domain": "SMioplus_relay",
+	"name": "Home automation relay",
 	"documentation": "TODO",
 	"dependencies": [],
 	"codeownders": [],
