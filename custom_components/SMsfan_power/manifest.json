@@ -1,0 +1,9 @@
+{
+	"version": "1.0.0",
+	"domain": "SMsfan_power",
+	"name": "Smart Fan Power",
+	"documentation": "TODO",
+	"dependencies": [],
+	"codeownders": [],
+	"requirements": ["SMsfan>=1.2.3"]
+}
