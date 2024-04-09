@@ -2,6 +2,7 @@ import voluptuous as vol
 import logging
 import time
 import types
+import inspect
 from inspect import signature
 
 import multiio as SMmultiio
@@ -187,6 +188,9 @@ class Number(NumberEntity):
 
     def set_native_value(self, value):
         try:
+            _LOGGER.error(str(inspect.getfullargspec))
             self._SM_set(self._chan, value)
+            if self._type == "motor":
+
         except Exception as ex:
             _LOGGER.error(NAME_PREFIX + " %s setting value failed, %e", self._type, ex)
