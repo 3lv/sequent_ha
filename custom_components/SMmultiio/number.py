@@ -1,6 +1,7 @@
 import voluptuous as vol
 import logging
 import time
+import types
 from inspect import signature
 
 import multiio as SMmultiio
@@ -117,24 +118,24 @@ class Number(NumberEntity):
         self._SM = SMmultiio.SMmultiio(self._stack)
         # Altering class so all functions have the same format
         com = SM_NUMBER_MAP[self._type]["com"]
-        _SM_get = getattr(self._SM, com["get"])
-        self._SM_get = _SM_get
         #argno = len(signature(_SM_get).parameters)
         #if argno == 0:
         if self._type == "motor":
             # It doesn't use stack level, add void parameter
             def _aux_SM_get(self, _):
-                _SM_get(self)
-            self._SM_get = _aux_SM_get
-        _SM_set = getattr(self._SM, com["set"])
-        self._SM_set = _SM_set
-        #argno = len(signature(_SM_set).parameters)
-        #if argno == 1:
+                return getattr(self, com["get"])()
+            self._SM_get = types.MethodType(_aux_SM_get, self._SM)
+        else:
+            _SM_get = getattr(self._SM, com["get"])
+            self._SM_get = _SM_get
         if self._type == "motor":
             # It doesn't use stack level, add void parameter
             def _aux_SM_set(self, _, value):
-                _SM_set(self, value)
-            self._SM_set = _aux_SM_set
+                getattr(self, com["set"])(value)
+            self._SM_set = types.MethodType(_aux_SM_set, self._SM)
+        else:
+            _SM_set = getattr(self._SM, com["set"])
+            self._SM_set = _SM_set
         self._short_timeout = .05
         self._icons = SM_NUMBER_MAP[self._type]["icon"]
         self._icon = self._icons["off"]
