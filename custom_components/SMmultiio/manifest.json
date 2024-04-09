@@ -1,6 +1,6 @@
 {
 	"version": "1.0.0",
-	"domain": "SMmultiio_led",
+	"domain": "SMmultiio",
 	"name": "Multiio led switch",
 	"documentation": "TODO",
 	"dependencies": [],
