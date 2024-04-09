@@ -120,16 +120,14 @@ class Number(NumberEntity):
         _SM_get = getattr(self._SM, com["get"])
         self._SM_get = _SM_get
         argno = len(signature(_SM_get).parameters)
-        _LOGGER.error(str(argno))
-        if argno == 1:
+        if argno == 0:
             # It doesn't use stack level, add void parameter
             def _aux_SM_get(self, _):
                 _SM_get(self)
             self._SM_get = _aux_SM_get
         _SM_set = getattr(self._SM, com["set"])
         self._SM_set = _SM_set
-        argno = len(signature(_SM_set).parameters)
-        if argno == 2:
+        if argno == 1:
             # It doesn't use stack level, add void parameter
             def _aux_SM_set(self, _, value):
                 _SM_set(self, value)
