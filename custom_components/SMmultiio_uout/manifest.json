@@ -1,0 +1,9 @@
+{
+	"version": "1.0.0",
+	"domain": "SMmultiio_uout",
+	"name": "Multiio U output",
+	"documentation": "TODO",
+	"dependencies": [],
+	"codeownders": [],
+	"requirements": ["SMmultiio>=1.0.0"]
+}

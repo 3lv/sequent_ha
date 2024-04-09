@@ -5,5 +5,5 @@
 	"documentation": "TODO",
 	"dependencies": [],
 	"codeownders": [],
-	"requirements": ["SMsfan>=1.2.3"]
+	"requirements": ["SMsfan>=1.2.4"]
 }

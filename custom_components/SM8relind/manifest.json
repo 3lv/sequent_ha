@@ -1,0 +1,9 @@
+{
+	"version": "1.0.0",
+	"domain": "SM8relind",
+	"name": "Home automation relay",
+	"documentation": "TODO",
+	"dependencies": [],
+	"codeownders": [],
+	"requirements": ["SM8relind>=1.0.2"]
+}

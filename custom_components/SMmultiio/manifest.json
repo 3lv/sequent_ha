@@ -1,0 +1,9 @@
+{
+	"version": "1.0.0",
+	"domain": "SMmultiio_led",
+	"name": "Multiio led switch",
+	"documentation": "TODO",
+	"dependencies": [],
+	"codeownders": [],
+	"requirements": ["SMmultiio>=1.0.0"]
+}

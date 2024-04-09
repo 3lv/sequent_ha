@@ -1,0 +1,9 @@
+{
+	"version": "1.0.0",
+	"domain": "SM16relind",
+	"name": "Home automation 16 Relays",
+	"documentation": "TODO",
+	"dependencies": [],
+	"codeownders": [],
+	"requirements": ["SM16relind>=1.0.0"]
+}

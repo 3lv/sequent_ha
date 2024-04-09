@@ -13,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 CONF_STACK="stack"
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-	vol.Optional(CONF_NAME, default='od'): cv.string,
+	vol.Optional(CONF_NAME, default='fan'): cv.string,
 	vol.Optional(CONF_STACK, default=0): cv.string,
 })
 
@@ -36,6 +36,9 @@ class Power(NumberEntity):
         """Return the name of the switch"""
         return self._name
     @property
+    def native_unit_of_measurement(self):
+        return "%"
+    @property
     def native_step(self):
         return float(1)
     @property
@@ -47,6 +50,7 @@ class Power(NumberEntity):
 
     def set_native_value(self, value):
         try:
-            SMsfan.setPower(self._stack, value)
+            SMsfan.setPower(self._stack, int(value))
+            _LOGGER.error("Fan set, is it working? stack=%s, value=%s", str(self._stack), str(int(value)))
         except Exception as ex:
             _LOGGER.error("Fan error %e", ex)
