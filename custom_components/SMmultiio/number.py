@@ -127,6 +127,7 @@ class Number(NumberEntity):
             self._SM_get = _aux_SM_get
         _SM_set = getattr(self._SM, com["set"])
         self._SM_set = _SM_set
+        argno = len(signature(_SM_set).parameters)
         if argno == 1:
             # It doesn't use stack level, add void parameter
             def _aux_SM_set(self, _, value):
