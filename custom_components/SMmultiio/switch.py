@@ -73,7 +73,8 @@ class Switch(SwitchEntity):
         self._type = type
         self._chan = int(chan)
         self._SM = SMmultiio.SMmultiio(self._stack)
-        self._is_on
+        com = SM_SWITCH_MAP[self._type]["com"]["get"]
+        self._is_on = getattr(self._SM, com)(self._chan)
 
     def update(self):
         time.sleep(.2)
