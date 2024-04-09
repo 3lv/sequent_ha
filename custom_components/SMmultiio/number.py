@@ -119,24 +119,6 @@ class Number(NumberEntity):
         self._SM = SMmultiio.SMmultiio(self._stack)
         # Altering class so all functions have the same format
         com = SM_NUMBER_MAP[self._type]["com"]
-        _SM_get = getattr(self._SM, com["get"])
-        argno = len(signature(_SM_get).parameters)
-        if argno == 1:
-            self._SM_get = _SM_get
-        elif argno == 0:
-            # It doesn't use stack level, add void parameter
-            def _aux_SM_get(self, _):
-                return getattr(self, com["get"])()
-            self._SM_get = types.MethodType(_aux_SM_get, self._SM)
-        _SM_set = getattr(self._SM, com["set"])
-        argno = len(signature(_SM_set).parameters)
-        if argno == 2:
-            self._SM_set = _SM_set
-        elif argno == 1:
-            # It doesn't use stack level, add void parameter
-            def _aux_SM_set(self, _, value):
-                getattr(self, com["set"])(value)
-            self._SM_set = types.MethodType(_aux_SM_set, self._SM)
         self._short_timeout = .05
         self._icons = SM_NUMBER_MAP[self._type]["icon"]
         self._icon = self._icons["off"]
@@ -145,6 +127,16 @@ class Number(NumberEntity):
         self._max_value = SM_NUMBER_MAP[self._type]["max_value"]
         self._step = SM_NUMBER_MAP[self._type]["step"]
         self._value = 0
+        self._SM_get = getattr(self._SM, com["get"])
+        if len(signature(self._SM_get).parameters) == 0:
+            def _aux_SM_get(self, _):
+                return getattr(self, com["get"])()
+            self._SM_get = types.MethodType(_aux_SM_get, self._SM)
+        self._SM_set = getattr(self._SM, com["set"])
+        if len(signature(self._SM_set).parameters) == 1:
+            def _aux_SM_set(self, _, value):
+                getattr(self, com["set"])(value)
+            self._SM_set = types.MethodType(_aux_SM_set, self._SM)
 
     def update(self):
         time.sleep(self._short_timeout)
