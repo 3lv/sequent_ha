@@ -11,7 +11,8 @@ from homeassistant.components.light import PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.switch import SwitchEntity
 
-MULTIIO_SWITCH_MAP = {
+NAME_PREFIX = "multiio"
+SM_SWITCH_MAP = {
         "led": {
                 "com": {
                     "get": "get_led",
@@ -27,12 +28,14 @@ MULTIIO_SWITCH_MAP = {
                     "get": "get_relay",
                     "set": "set_relay"
                 },
+                "icon": {
+                    "on": "mdi:toggle-switch-variant",
+                    "off": "mdi:toggle-switch-variant-off",
+                }
         }
 }
-SM_SWITCH_MAP = MULTIIO_SWITCH_MAP
 
 CONF_STACK = "stack"
-
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional("led", default="-1"): cv.string,
     vol.Optional("relay", default="-1"): cv.string,
@@ -67,26 +70,38 @@ class Switch(SwitchEntity):
     """Sequent Microsystems Multiio Switch"""
     def __init__(self, name, stack, type, chan):
         if name == "":
-            name = type + chan
+            name = NAME_PREFIX + "_" + type + chan
         self._name = name
         self._stack = int(stack)
         self._type = type
         self._chan = int(chan)
         self._SM = SMmultiio.SMmultiio(self._stack)
-        com = SM_SWITCH_MAP[self._type]["com"]["get"]
-        self._is_on = getattr(self._SM, com)(self._chan)
+        com = SM_SWITCH_MAP[self._type]["com"]
+        self._SM_get = getattr(self._SM, com["get"])
+        self._SM_set = getattr(self._SM, com["set"])
+        self._is_on = self._SM_get(self._chan)
+        self._short_timeout = .05
+        self._icons = SM_SWITCH_MAP[self._type]["icon"]
+        self._icon = self._icons["off"]
 
     def update(self):
-        time.sleep(.2)
-        com = SM_SWITCH_MAP[self._type]["com"]["get"]
+        time.sleep(.05)
         try:
-            self._is_on = getattr(self._SM, com)(self._chan)
+            self._is_on = self._SM_get(self._chan)
         except Exception as ex:
-            _LOGGER.error("Multiio Led is_on() check failed, %e, %s, %s", ex, str(self._stack), str(self._chan))
+            _LOGGER.error(NAME_PREFIX + " %s update() failed, %e, %s, %s", self._type, ex, str(self._stack), str(self._chan))
+        if self._is_on:
+            self._icon = self._icons["on"]
+        else:
+            self._icon = self._icons["off"]
 
     @property
     def name(self):
         return self._name
+
+    @property
+    def icon(self):
+        return self._icon
 
     @property
     def is_on(self):
@@ -94,14 +109,12 @@ class Switch(SwitchEntity):
 
     def turn_on(self, **kwargs):
         try:
-            com = SM_SWITCH_MAP[self._type]["com"]["set"]
-            getattr(self._SM, com)(self._chan, 1)
+            self._SM_set(self._chan, 1)
         except Exception as ex:
-            _LOGGER.error("Multiio Led turn ON failed, %e", ex)
+            _LOGGER.error(NAME_PREFIX + " %s turn ON failed, %e", self._type, ex)
 
     def turn_off(self, **kwargs):
         try:
-            com = SM_SWITCH_MAP[self._type]["com"]["set"]
-            getattr(self._SM, com)(self._chan, 0)
+            self._SM_set(self._chan, 0)
         except Exception as ex:
-            _LOGGER.error("Multiio Led turn OFF failed, %e", ex);
+            _LOGGER.error("Multiio %s turn OFF failed, %e", self._type, ex);
