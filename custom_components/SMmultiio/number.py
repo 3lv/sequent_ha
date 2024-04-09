@@ -41,6 +41,20 @@ SM_NUMBER_MAP = {
                     "off": "mdi:current-dc"
                 }
         },
+        "servo": {
+                "uom": "%",
+                "min_value": -140.0,
+                "max_value": +140.0,
+                "step": 0.1,
+                "com": {
+                    "get": "get_servo",
+                    "set": "set_servo"
+                },
+                "icon": {
+                    "on": "mdi:vector-triangle",
+                    "off": "mdi:vector-triangle"
+                }
+        },
 }
 
 CONF_STACK = "stack"
