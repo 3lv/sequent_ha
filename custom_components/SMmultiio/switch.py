@@ -1,6 +1,7 @@
 import voluptuous as vol
 import multiio as SMmultiio
 import logging
+import time
 
 from homeassistant.const import (
 	CONF_NAME
@@ -72,6 +73,15 @@ class Switch(SwitchEntity):
         self._type = type
         self._chan = int(chan)
         self._SM = SMmultiio.SMmultiio(self._stack)
+        self._is_on
+
+    def update(self):
+        time.sleep(.2)
+        com = SM_SWITCH_MAP[self._type]["com"]["get"]
+        try:
+            self._is_on = getattr(self._SM, com)(self._chan)
+        except Exception as ex:
+            _LOGGER.error("Multiio Led is_on() check failed, %e, %s, %s", ex, str(self._stack), str(self._chan))
 
     @property
     def name(self):
@@ -79,12 +89,7 @@ class Switch(SwitchEntity):
 
     @property
     def is_on(self):
-        try:
-            com = SM_SWITCH_MAP[self._type]["com"]["get"]
-            return getattr(self._SM, com)(self._chan)
-        except Exception as ex:
-            _LOGGER.error("Multiio Led is_on() check failed, %e, %s, %s", ex, str(self._stack), str(self._chan))
-            return False
+        return self._is_on
 
     def turn_on(self, **kwargs):
         try:
