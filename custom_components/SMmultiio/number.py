@@ -129,7 +129,7 @@ class Number(NumberEntity):
                 return getattr(self, com["get"])()
             self._SM_get = types.MethodType(_aux_SM_get, self._SM)
         _SM_set = getattr(self._SM, com["set"])
-        argno = len(signature(_SM_get).parameters)
+        argno = len(signature(_SM_set).parameters)
         if argno == 2:
             self._SM_set = _SM_set
         elif argno == 1:
