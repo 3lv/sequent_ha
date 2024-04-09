@@ -5,5 +5,5 @@
 	"documentation": "TODO",
 	"dependencies": [],
 	"codeownders": [],
-	"requirements": ["SMmultiio>=1.0.0"]
+	"requirements": ["SMmultiio>=1.1.0"]
 }
