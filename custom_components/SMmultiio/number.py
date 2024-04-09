@@ -119,24 +119,24 @@ class Number(NumberEntity):
         self._SM = SMmultiio.SMmultiio(self._stack)
         # Altering class so all functions have the same format
         com = SM_NUMBER_MAP[self._type]["com"]
-        #argno = len(signature(_SM_get).parameters)
-        #if argno == 0:
-        if self._type == "motor":
+        _SM_get = getattr(self._SM, com["get"])
+        argno = len(signature(_SM_get).parameters)
+        if argno == 1:
+            self._SM_get = _SM_get
+        elif argno == 0:
             # It doesn't use stack level, add void parameter
             def _aux_SM_get(self, _):
                 return getattr(self, com["get"])()
             self._SM_get = types.MethodType(_aux_SM_get, self._SM)
-        else:
-            _SM_get = getattr(self._SM, com["get"])
-            self._SM_get = _SM_get
-        if self._type == "motor":
+        _SM_set = getattr(self._SM, com["set"])
+        argno = len(signature(_SM_get).parameters)
+        if argno == 2:
+            self._SM_set = _SM_set
+        elif argno == 1:
             # It doesn't use stack level, add void parameter
             def _aux_SM_set(self, _, value):
                 getattr(self, com["set"])(value)
             self._SM_set = types.MethodType(_aux_SM_set, self._SM)
-        else:
-            _SM_set = getattr(self._SM, com["set"])
-            self._SM_set = _SM_set
         self._short_timeout = .05
         self._icons = SM_NUMBER_MAP[self._type]["icon"]
         self._icon = self._icons["off"]
@@ -188,9 +188,6 @@ class Number(NumberEntity):
 
     def set_native_value(self, value):
         try:
-            
-            if self._type == "motor":
-                _LOGGER.error(str(inspect.getfullargspec(self._SM_set)))
             self._SM_set(self._chan, value)
         except Exception as ex:
             _LOGGER.error(NAME_PREFIX + " %s setting value failed, %e", self._type, ex)
