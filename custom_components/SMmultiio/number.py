@@ -23,8 +23,22 @@ SM_NUMBER_MAP = {
                     "set": "set_u_out"
                 },
                 "icon": {
-                    "on": "mdi:power-plug",
-                    "off": "mdi:power-plug"
+                    "on": "mdi:flash-triangle",
+                    "off": "mdi:flash-triangle"
+                }
+        },
+        "iout": {
+                "uom": "mA",
+                "min_value": 4.0,
+                "max_value": 20.0,
+                "step": 0.01,
+                "com": {
+                    "get": "get_i_out",
+                    "set": "set_i_out"
+                },
+                "icon": {
+                    "on": "mdi:current-dc",
+                    "off": "mdi:current-dc"
                 }
         },
 }
@@ -32,6 +46,7 @@ SM_NUMBER_MAP = {
 CONF_STACK = "stack"
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional("uout", default="-1"): cv.string,
+    vol.Optional("iout", default="-1"): cv.string,
 	vol.Optional(CONF_NAME, default=""): cv.string,
 	vol.Optional(CONF_STACK, default="0"): cv.string,
 })
