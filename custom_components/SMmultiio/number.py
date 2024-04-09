@@ -188,9 +188,9 @@ class Number(NumberEntity):
 
     def set_native_value(self, value):
         try:
-            _LOGGER.error(str(inspect.getfullargspec))
-            self._SM_set(self._chan, value)
+            
             if self._type == "motor":
-
+                _LOGGER.error(str(inspect.getfullargspec(self._SM_set)))
+            self._SM_set(self._chan, value)
         except Exception as ex:
             _LOGGER.error(NAME_PREFIX + " %s setting value failed, %e", self._type, ex)
