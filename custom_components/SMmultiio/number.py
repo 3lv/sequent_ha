@@ -9,36 +9,29 @@ from homeassistant.const import (
 
 from homeassistant.components.light import PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
-from homeassistant.components.switch import SwitchEntity
+from homeassistant.components.number import NumberEntity
 
 NAME_PREFIX = "multiio"
-SM_SWITCH_MAP = {
-        "led": {
+SM_NUMBER_MAP = {
+        "uout": {
+                "uom": "V",
+                "min_value": 0.0,
+                "max_value": 10.0,
+                "step": 0.01,
                 "com": {
-                    "get": "get_led",
-                    "set": "set_led"
+                    "get": "get_u_out",
+                    "set": "set_u_out"
                 },
                 "icon": {
-                    "on": "mdi:led-on",
-                    "off": "mdi:led-off"
+                    "on": "mdi:power-plug",
+                    "off": "mdi:power-plug"
                 }
         },
-        "relay": {
-                "com": {
-                    "get": "get_relay",
-                    "set": "set_relay"
-                },
-                "icon": {
-                    "on": "mdi:toggle-switch-variant",
-                    "off": "mdi:toggle-switch-variant-off",
-                }
-        }
 }
 
 CONF_STACK = "stack"
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Optional("led", default="-1"): cv.string,
-    vol.Optional("relay", default="-1"): cv.string,
+    vol.Optional("uout", default="-1"): cv.string,
 	vol.Optional(CONF_NAME, default=""): cv.string,
 	vol.Optional(CONF_STACK, default="0"): cv.string,
 })
@@ -48,7 +41,7 @@ _LOGGER = logging.getLogger(__name__)
 def setup_platform(hass, config, add_devices, discovery_info=None):
     switch_type = -1
     channel = -1
-    for key in SM_SWITCH_MAP:
+    for key in SM_NUMBER_MAP:
         val = config.get(key)
         if val != "-1":
             if switch_type != -1:
@@ -59,14 +52,14 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     if switch_type != -1:
         # NO SWITCH TYPE FOUND, AMBIGUOUS, ERROR
         pass
-    add_devices([Switch(
+    add_devices([Number(
 		name=config.get(CONF_NAME),
         stack=config.get(CONF_STACK),
         type=switch_type,
         chan=channel
 	)])
 
-class Switch(SwitchEntity):
+class Number(NumberEntity):
     """Sequent Microsystems Multiio Switch"""
     def __init__(self, name, stack, type, chan):
         if name == "":
@@ -76,22 +69,26 @@ class Switch(SwitchEntity):
         self._type = type
         self._chan = int(chan)
         self._SM = SMmultiio.SMmultiio(self._stack)
-        com = SM_SWITCH_MAP[self._type]["com"]
+        com = SM_NUMBER_MAP[self._type]["com"]
         self._SM_get = getattr(self._SM, com["get"])
         self._SM_set = getattr(self._SM, com["set"])
-        self._is_on = self._SM_get(self._chan)
         self._short_timeout = .05
-        self._icons = SM_SWITCH_MAP[self._type]["icon"]
+        self._icons = SM_NUMBER_MAP[self._type]["icon"]
         self._icon = self._icons["off"]
+        self._uom = SM_NUMBER_MAP[self._type]["uom"]
+        self._min_value = SM_NUMBER_MAP[self._type]["min_value"]
+        self._max_value = SM_NUMBER_MAP[self._type]["max_value"]
+        self._step = SM_NUMBER_MAP[self._type]["step"]
+        self._value = 0
 
     def update(self):
-        time.sleep(.05)
+        time.sleep(self._short_timeout)
         try:
-            self._is_on = self._SM_get(self._chan)
+            self._value = self._SM_get(self._chan)
         except Exception as ex:
             _LOGGER.error(NAME_PREFIX + " %s update() failed, %e, %s, %s", self._type, ex, str(self._stack), str(self._chan))
             return
-        if self._is_on:
+        if self._value != 0:
             self._icon = self._icons["on"]
         else:
             self._icon = self._icons["off"]
@@ -105,17 +102,27 @@ class Switch(SwitchEntity):
         return self._icon
 
     @property
-    def is_on(self):
-        return self._is_on
+    def native_unit_of_measurement(self):
+        return self._uom
 
-    def turn_on(self, **kwargs):
-        try:
-            self._SM_set(self._chan, 1)
-        except Exception as ex:
-            _LOGGER.error(NAME_PREFIX + " %s turn ON failed, %e", self._type, ex)
+    @property
+    def native_step(self):
+        return self._step
 
-    def turn_off(self, **kwargs):
+    @property
+    def native_min_value(self):
+        return self._min_value
+
+    @property
+    def native_max_value(self):
+        return self._max_value
+
+    @property
+    def native_value(self):
+        return self._value
+
+    def set_native_value(self, value):
         try:
-            self._SM_set(self._chan, 0)
+            self._SM_set(self._chan, value)
         except Exception as ex:
-            _LOGGER.error("Multiio %s turn OFF failed, %e", self._type, ex);
+            _LOGGER.error(NAME_PREFIX + " %s setting value failed, %e", self._type, ex)
