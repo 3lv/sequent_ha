@@ -12,6 +12,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.components.number import NumberEntity
 
 NAME_PREFIX = "multiio"
+CONF_STACK = "stack"
 SM_NUMBER_MAP = {
         "uout": {
                 "uom": "V",
@@ -55,15 +56,29 @@ SM_NUMBER_MAP = {
                     "off": "mdi:vector-triangle"
                 }
         },
+        "motor": {
+                "uom": "%",
+                "min_value": -100.0,
+                "max_value": +100.0,
+                "step": 0.1,
+                "com": {
+                    "get": "get_motor",
+                    "set": "set_motor"
+                },
+                "icon": {
+                    "on": "mdi:vector-triangle",
+                    "off": "mdi:vector-triangle"
+                }
+        },
 }
 
-CONF_STACK = "stack"
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Optional("uout", default="-1"): cv.string,
-    vol.Optional("iout", default="-1"): cv.string,
+SCHEMA_EXTEND = {
 	vol.Optional(CONF_NAME, default=""): cv.string,
 	vol.Optional(CONF_STACK, default="0"): cv.string,
-})
+}
+for key in SM_NUMBER_MAP:
+    SCHEMA_EXTEND[vol.Optional(key, default="-1")] = cv.string
+PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SCHEMA_EXTEND)
 
 _LOGGER = logging.getLogger(__name__)
 
