@@ -119,18 +119,21 @@ class Number(NumberEntity):
         com = SM_NUMBER_MAP[self._type]["com"]
         _SM_get = getattr(self._SM, com["get"])
         self._SM_get = _SM_get
-        if len(signature(_SM_get).parameters) == 1:
+        argno = len(signature(_SM_get).parameters)
+        _LOGGER.error(str(argno))
+        if argno == 1:
             # It doesn't use stack level, add void parameter
-            def _ext_SM_get(self, _):
+            def _aux_SM_get(self, _):
                 _SM_get(self)
-            self._SM_get = _ext_SM_get
+            self._SM_get = _aux_SM_get
         _SM_set = getattr(self._SM, com["set"])
         self._SM_set = _SM_set
-        if len(signature(_SM_set).parameters) == 2:
+        argno = len(signature(_SM_set).parameters)
+        if argno == 2:
             # It doesn't use stack level, add void parameter
-            def _ext_SM_set(self, _, value):
+            def _aux_SM_set(self, _, value):
                 _SM_set(self, value)
-            self._SM_set = _ext_SM_set
+            self._SM_set = _aux_SM_set
         self._short_timeout = .05
         self._icons = SM_NUMBER_MAP[self._type]["icon"]
         self._icon = self._icons["off"]
