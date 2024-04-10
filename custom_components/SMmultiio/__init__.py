@@ -50,6 +50,8 @@ def setup(hass, config):
                     CONF_STACK: stack,
                     CONF_TYPE: "ALL"
             }
+            hass.helpers.discovery.load_platform("sensor", DOMAIN, entity_config, config)
+            continue
         for entity in card_config:
             try:
                 [type, chan] = entity.rsplit("-", 1)
