@@ -90,6 +90,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                     chan=str(chan+1)
                 ))
         add_devices(entities)
+        return
     elif type not in SM_SENSOR_MAP:
         return
     _LOGGER.error("config: %s", discovery_info)
