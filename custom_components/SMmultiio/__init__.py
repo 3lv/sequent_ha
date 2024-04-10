@@ -188,7 +188,7 @@ def setup(hass, config):
     card_configs = config.get(DOMAIN)
     if not card_configs:
         load_all_platforms(hass, stack=0)
-        return
+        return True
     for card_config in card_configs:
         stack = int(card_config.pop(CONF_STACK, 0))
         if not card_config:
