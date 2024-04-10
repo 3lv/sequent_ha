@@ -13,8 +13,8 @@ CONF_CHAN = "chan"
 """
 SMmultiio:
     -   stack: 0
-        led-1:
-        led-2:
+        rtd_res-1:
+        rtd_temp-1:
 
 """
 SCHEMA_DICT = {}
@@ -44,6 +44,7 @@ def setup(hass, config):
                     CONF_TYPE: type,
                     CONF_CHAN: chan
             }
+            _LOGGER.debug("entity_config: %s", entity_config)
             hass.helpers.discovery.load_platform("sensor", DOMAIN, {}, entity_config)
         
     return True
