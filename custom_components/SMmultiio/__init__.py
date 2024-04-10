@@ -31,8 +31,7 @@ def setup(hass, config):
     hass.data[DOMAIN] = []
     configs = config.get(DOMAIN)
     for conf in configs:
-        stack = conf.get(CONF_STACK)
-        hass.data[DOMAIN][stack] = "cazan"
-        _LOGGER.error(conf["stack"])
+        _LOGGER.error(conf.get("stack"))
+        _LOGGER.error(conf.get("led"))
         
     return True
