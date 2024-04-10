@@ -79,6 +79,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     if discovery_info == None:
         return
     _LOGGER.error("config: %s", discovery_info)
+    _LOGGER.error("config: %s", config)
     add_devices([Sensor(
 		name=config.get(CONF_NAME, ""),
         stack=config.get(CONF_STACK, 0),
