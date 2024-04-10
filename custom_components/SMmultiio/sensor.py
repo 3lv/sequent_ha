@@ -15,7 +15,9 @@ from homeassistant.components.light import PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import SensorEntity
 
-from . import DOMAIN
+from . import (
+        DOMAIN, CONF_STACK, CONF_TYPE, CONF_CHAN
+)
 
 NAME_PREFIX = "multiio"
 CONF_STACK = "stack"
@@ -76,26 +78,11 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     # We want this platform to be setup via discovery
     if discovery_info == None:
         return
-    sensor_type = -1
-    channel = -1
-    for key in SM_SENSOR_MAP:
-        val = config.get(key)
-        _LOGGER.error(str(val))
-        _LOGGER.error(str(config.get(DOMAIN)))
-        if val != None:
-            if sensor_type != -1:
-                # ALREADY SET RAISE ERROR
-                pass
-            sensor_type = key
-            channel = val
-    if sensor_type != -1:
-        # NO SWITCH TYPE FOUND, AMBIGUOUS, ERROR
-        pass
     add_devices([Sensor(
-		name=config.get(CONF_NAME),
-        stack=config.get(CONF_STACK) or "0",
-        type=sensor_type,
-        chan=channel
+		name=config.get(CONF_NAME, ""),
+        stack=config.get(CONF_STACK, 0),
+        type=config.get(CONF_TYPE),
+        chan=config.get(CONF_CHAN)
 	)])
 
 class Sensor(SensorEntity):
