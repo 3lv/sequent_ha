@@ -34,7 +34,11 @@ def setup(hass, config):
     for card_config in card_configs:
         stack = int(card_config.pop(CONF_STACK, 0))
         for entity in card_config:
-            [type, chan] = entity.rsplit("-", 1)[1]
+            try:
+                [type, chan] = entity.rsplit("-", 1)
+            except:
+                _LOGGER.error(entity, " doesn't respect type-chan format")
+                continue
             entity_config = {
                     CONF_STACK: stack,
                     CONF_TYPE: type,
