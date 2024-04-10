@@ -196,7 +196,8 @@ def setup(hass, config):
             continue
         for entity in card_config:
             try:
-                [type, chan] = entity.rsplit("-", 1)
+                [type, chan] = entity.rsplit("_", 1)
+                chan = int(chan)
             except:
                 _LOGGER.error(entity, " doesn't respect type-chan format")
                 continue

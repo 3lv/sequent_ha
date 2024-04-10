@@ -40,7 +40,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         for sensor, attr in SM_SENSOR_MAP.items():
             for chan in range(int(attr["chan_no"])):
                 entities.append(Sensor(
-                    name=sensor+"-"+str(chan+1),
+                    name=sensor+"_"+str(chan+1),
                     stack=discovery_info.get(CONF_STACK, 0),
                     type=sensor,
                     chan=str(chan+1)
