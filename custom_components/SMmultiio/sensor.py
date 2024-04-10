@@ -78,7 +78,8 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     channel = -1
     for key in SM_NUMBER_MAP:
         val = config.get(key)
-        if val != "-1":
+        _LOGGER.error(str(val))
+        if val != None:
             if sensor_type != -1:
                 # ALREADY SET RAISE ERROR
                 pass
