@@ -60,17 +60,20 @@ SM_NUMBER_MAP = {
         },
 }
 
-SCHEMA_EXTEND = {
-	vol.Optional(CONF_NAME, default=""): cv.string,
-	vol.Optional(CONF_STACK, default="0"): cv.string,
-}
-for key in SM_NUMBER_MAP:
-    SCHEMA_EXTEND[vol.Optional(key, default="-1")] = cv.string
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SCHEMA_EXTEND)
+#SCHEMA_EXTEND = {
+#	vol.Optional(CONF_NAME, default=""): cv.string,
+#	vol.Optional(CONF_STACK, default="0"): cv.string,
+#}
+#for key in SM_NUMBER_MAP:
+#    SCHEMA_EXTEND[vol.Optional(key, default="-1")] = cv.string
+#PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SCHEMA_EXTEND)
 
 _LOGGER = logging.getLogger(__name__)
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
+    # We want this platform to be setup via discovery
+    if discovery_info == None:
+        return
     switch_type = -1
     channel = -1
     for key in SM_NUMBER_MAP:
