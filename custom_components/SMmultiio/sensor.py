@@ -74,23 +74,23 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     # We want this platform to be setup via discovery
     if discovery_info == None:
         return
-    switch_type = -1
+    sensor_type = -1
     channel = -1
     for key in SM_NUMBER_MAP:
         val = config.get(key)
         if val != "-1":
-            if switch_type != -1:
+            if sensor_type != -1:
                 # ALREADY SET RAISE ERROR
                 pass
-            switch_type = key
+            sensor_type = key
             channel = val
-    if switch_type != -1:
+    if sensor_type != -1:
         # NO SWITCH TYPE FOUND, AMBIGUOUS, ERROR
         pass
     add_devices([Sensor(
 		name=config.get(CONF_NAME),
-        stack=config.get(CONF_STACK),
-        type=switch_type,
+        stack=config.get(CONF_STACK) or "0",
+        type=sensor_type,
         chan=channel
 	)])
 
