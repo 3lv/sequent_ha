@@ -1,6 +1,11 @@
 """Sequent Microsystems Multiio Integration"""
 
+import voluptuous as vol
+
 DOMAIN = "SMmultiio"
+
+CONFIG_SCHEMA = vol.Schema({
+})
 
 def setup(hass, config):
     hass.data[DOMAIN] = {

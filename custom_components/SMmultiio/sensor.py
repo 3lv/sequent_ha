@@ -15,6 +15,8 @@ from homeassistant.components.light import PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import SensorEntity
 
+from . import DOMAIN
+
 NAME_PREFIX = "multiio"
 CONF_STACK = "stack"
 SM_NUMBER_MAP = {
@@ -79,6 +81,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     for key in SM_NUMBER_MAP:
         val = config.get(key)
         _LOGGER.error(str(val))
+        _LOGGER.error(str(config.get(DOMAIN)))
         if val != None:
             if sensor_type != -1:
                 # ALREADY SET RAISE ERROR
