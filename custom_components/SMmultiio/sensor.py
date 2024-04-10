@@ -12,57 +12,13 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import SensorEntity
 
 from . import (
-        DOMAIN, CONF_STACK, CONF_TYPE, CONF_CHAN, CONF_NAME
+        DOMAIN, CONF_STACK, CONF_TYPE, CONF_CHAN, CONF_NAME,
+        SM_MAP
 )
+SM_SENSOR_MAP = SM_MAP["sensor"]
 
 NAME_PREFIX = "multiio"
 CONF_STACK = "stack"
-SM_SENSOR_MAP = {
-        "rtd_res": {
-                "chan_no": 2,
-                "uom": "Ohm",
-                "com": {
-                    "get": "get_rtd_res",
-                },
-                "icon": {
-                    "on": "mdi:flash-triangle",
-                    "off": "mdi:flash-triangle"
-                }
-        },
-        "rtd_temp": {
-                "chan_no": 2,
-                "uom": "°C",
-                "com": {
-                    "get": "get_rtd_temp",
-                },
-                "icon": {
-                    "on": "mdi:flash-triangle",
-                    "off": "mdi:flash-triangle"
-                }
-        },
-        "iin": {
-                "chan_no": 2,
-                "uom": "mA",
-                "com": {
-                    "get": "get_i_in",
-                },
-                "icon": {
-                    "on": "mdi:flash-triangle",
-                    "off": "mdi:flash-triangle"
-                }
-        },
-        "uin": {
-                "chan_no": 2,
-                "uom": "V",
-                "com": {
-                    "get": "get_i_in",
-                },
-                "icon": {
-                    "on": "mdi:flash-triangle",
-                    "off": "mdi:flash-triangle"
-                }
-        },
-}
 
 #SCHEMA_EXTEND = {
 #	vol.Optional(CONF_NAME, default=""): cv.string,
@@ -81,8 +37,8 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     type = discovery_info.get(CONF_TYPE)
     if type == "ALL":
         entities = []
-        for sensor in SM_SENSOR_MAP:
-            for chan in range(int(SM_SENSOR_MAP[sensor]["chan_no"])):
+        for sensor, attr in SM_SENSOR_MAP.items():
+            for chan in range(int(attr["chan_no"])):
                 entities.append(Sensor(
                     name=sensor+"-"+str(chan+1),
                     stack=discovery_info.get(CONF_STACK, 0),

@@ -5,6 +5,55 @@ import logging
 from homeassistant.helpers import config_validation as cv
 import voluptuous as vol
 
+SM_MAP = {
+    "sensor":  {
+        "rtd_res": {
+                "chan_no": 2,
+                "uom": "Ohm",
+                "com": {
+                    "get": "get_rtd_res",
+                },
+                "icon": {
+                    "on": "mdi:flash-triangle",
+                    "off": "mdi:flash-triangle"
+                }
+        },
+        "rtd_temp": {
+                "chan_no": 2,
+                "uom": "°C",
+                "com": {
+                    "get": "get_rtd_temp",
+                },
+                "icon": {
+                    "on": "mdi:flash-triangle",
+                    "off": "mdi:flash-triangle"
+                }
+        },
+        "iin": {
+                "chan_no": 2,
+                "uom": "mA",
+                "com": {
+                    "get": "get_i_in",
+                },
+                "icon": {
+                    "on": "mdi:flash-triangle",
+                    "off": "mdi:flash-triangle"
+                }
+        },
+        "uin": {
+                "chan_no": 2,
+                "uom": "V",
+                "com": {
+                    "get": "get_i_in",
+                },
+                "icon": {
+                    "on": "mdi:flash-triangle",
+                    "off": "mdi:flash-triangle"
+                }
+        },
+    }
+}
+
 
 from homeassistant.const import (
 	CONF_NAME
@@ -20,9 +69,7 @@ SMmultiio:
     -   stack: 0
         rtd_res-1:
         rtd_temp-1:
-
 """
-SCHEMA_DICT = {}
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema([vol.Schema({
@@ -31,26 +78,34 @@ CONFIG_SCHEMA = vol.Schema({
 }, extra=vol.ALLOW_EXTRA)
 
 _LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.DEBUG)
+
+def load_platform(hass, entity_config):
+        for platform_type, attr in SM_MAP.items():
+            if entity_config[CONF_TYPE] in attr:
+                hass.helpers.discovery.load_platform(
+                        platform_type, DOMAIN, entity_config, entity_config
+                )
+def load_all_platforms(hass, stack=0):
+    for platform_type in SM_MAP:
+        entity_config = {
+                CONF_STACK: stack,
+                CONF_TYPE: "ALL"
+        }
+        hass.helpers.discovery.load_platform(
+                platform_type, DOMAIN, entity_config, entity_config
+        )
+
 
 def setup(hass, config):
     hass.data[DOMAIN] = []
     card_configs = config.get(DOMAIN)
     if not card_configs:
-        entity_config = {
-                CONF_STACK: 0,
-                CONF_TYPE: "ALL"
-        }
-        hass.helpers.discovery.load_platform("sensor", DOMAIN, entity_config, config)
+        load_all_platforms(hass, stack=0)
         return
     for card_config in card_configs:
         stack = int(card_config.pop(CONF_STACK, 0))
         if not card_config:
-            entity_config = {
-                    CONF_STACK: stack,
-                    CONF_TYPE: "ALL"
-            }
-            hass.helpers.discovery.load_platform("sensor", DOMAIN, entity_config, config)
+            load_all_platforms(hass, stack=stack)
             continue
         for entity in card_config:
             try:
@@ -58,12 +113,13 @@ def setup(hass, config):
             except:
                 _LOGGER.error(entity, " doesn't respect type-chan format")
                 continue
-            entity_config = {
+            entity_config = card_config[entity]
+            entity_config |= {
                     CONF_NAME: entity,
                     CONF_STACK: stack,
                     CONF_TYPE: type,
                     CONF_CHAN: chan
             }
-            hass.helpers.discovery.load_platform("sensor", DOMAIN, entity_config, config)
+            load_platform(hass, entity_config)
         
     return True
