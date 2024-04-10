@@ -49,7 +49,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         return
     elif type not in SM_SENSOR_MAP:
         return
-    _LOGGER.error("config: %s", discovery_info)
     add_devices([Sensor(
 		name=discovery_info.get(CONF_NAME, ""),
         stack=discovery_info.get(CONF_STACK, 0),

@@ -4,6 +4,7 @@ import time
 import types
 import inspect
 from inspect import signature
+_LOGGER = logging.getLogger(__name__)
 
 import multiio as SMmultiio
 
@@ -15,96 +16,38 @@ from homeassistant.components.light import PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.number import NumberEntity
 
+from . import (
+        DOMAIN, CONF_STACK, CONF_TYPE, CONF_CHAN, CONF_NAME,
+        SM_MAP
+)
+SM_NUMBER_MAP = SM_MAP["number"]
+
 NAME_PREFIX = "multiio"
-CONF_STACK = "stack"
-SM_NUMBER_MAP = {
-        "uout": {
-                "uom": "V",
-                "min_value": 0.0,
-                "max_value": 10.0,
-                "step": 0.01,
-                "com": {
-                    "get": "get_u_out",
-                    "set": "set_u_out"
-                },
-                "icon": {
-                    "on": "mdi:flash-triangle",
-                    "off": "mdi:flash-triangle"
-                }
-        },
-        "iout": {
-                "uom": "mA",
-                "min_value": 4.0,
-                "max_value": 20.0,
-                "step": 0.01,
-                "com": {
-                    "get": "get_i_out",
-                    "set": "set_i_out"
-                },
-                "icon": {
-                    "on": "mdi:current-dc",
-                    "off": "mdi:current-dc"
-                }
-        },
-        "servo": {
-                "uom": "%",
-                "min_value": -140.0,
-                "max_value": +140.0,
-                "step": 0.1,
-                "com": {
-                    "get": "get_servo",
-                    "set": "set_servo"
-                },
-                "icon": {
-                    "on": "mdi:vector-triangle",
-                    "off": "mdi:vector-triangle"
-                }
-        },
-        "motor": {
-                "uom": "%",
-                "min_value": -100.0,
-                "max_value": +100.0,
-                "step": 0.1,
-                "com": {
-                    "get": "get_motor",
-                    "set": "set_motor"
-                },
-                "icon": {
-                    "on": "mdi:vector-triangle",
-                    "off": "mdi:vector-triangle"
-                }
-        },
-}
-
-SCHEMA_EXTEND = {
-	vol.Optional(CONF_NAME, default=""): cv.string,
-	vol.Optional(CONF_STACK, default="0"): cv.string,
-}
-for key in SM_NUMBER_MAP:
-    SCHEMA_EXTEND[vol.Optional(key, default="-1")] = cv.string
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SCHEMA_EXTEND)
-
-_LOGGER = logging.getLogger(__name__)
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
-    switch_type = -1
-    channel = -1
-    for key in SM_NUMBER_MAP:
-        val = config.get(key)
-        if val != "-1":
-            if switch_type != -1:
-                # ALREADY SET RAISE ERROR
-                pass
-            switch_type = key
-            channel = val
-    if switch_type != -1:
-        # NO SWITCH TYPE FOUND, AMBIGUOUS, ERROR
-        pass
+    # We want this platform to be setup via discovery
+    if discovery_info == None:
+        return
+    type = discovery_info.get(CONF_TYPE)
+    if type == "ALL":
+        entities = []
+        for sensor, attr in SM_NUMBER_MAP.items():
+            for chan in range(int(attr["chan_no"])):
+                entities.append(Number(
+                    name=sensor+"-"+str(chan+1),
+                    stack=discovery_info.get(CONF_STACK, 0),
+                    type=sensor,
+                    chan=str(chan+1)
+                ))
+        add_devices(entities)
+        return
+    elif type not in SM_NUMBER_MAP:
+        return
     add_devices([Number(
-		name=config.get(CONF_NAME),
-        stack=config.get(CONF_STACK),
-        type=switch_type,
-        chan=channel
+		name=discovery_info.get(CONF_NAME, ""),
+        stack=discovery_info.get(CONF_STACK, 0),
+        type=discovery_info.get(CONF_TYPE),
+        chan=discovery_info.get(CONF_CHAN)
 	)])
 
 class Number(NumberEntity):

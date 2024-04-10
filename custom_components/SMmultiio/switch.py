@@ -11,59 +11,40 @@ from homeassistant.components.light import PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.switch import SwitchEntity
 
-NAME_PREFIX = "multiio"
-SM_SWITCH_MAP = {
-        "led": {
-                "com": {
-                    "get": "get_led",
-                    "set": "set_led"
-                },
-                "icon": {
-                    "on": "mdi:led-on",
-                    "off": "mdi:led-off"
-                }
-        },
-        "relay": {
-                "com": {
-                    "get": "get_relay",
-                    "set": "set_relay"
-                },
-                "icon": {
-                    "on": "mdi:toggle-switch-variant",
-                    "off": "mdi:toggle-switch-variant-off",
-                }
-        }
-}
+from . import (
+        DOMAIN, CONF_STACK, CONF_TYPE, CONF_CHAN, CONF_NAME,
+        SM_MAP
+)
+SM_SWITCH_MAP = SM_MAP["switch"]
 
-CONF_STACK = "stack"
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Optional("led", default="-1"): cv.string,
-    vol.Optional("relay", default="-1"): cv.string,
-	vol.Optional(CONF_NAME, default=""): cv.string,
-	vol.Optional(CONF_STACK, default="0"): cv.string,
-})
+NAME_PREFIX = "multiio"
 
 _LOGGER = logging.getLogger(__name__)
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
-    switch_type = -1
-    channel = -1
-    for key in SM_SWITCH_MAP:
-        val = config.get(key)
-        if val != "-1":
-            if switch_type != -1:
-                # ALREADY SET RAISE ERROR
-                pass
-            switch_type = key
-            channel = val
-    if switch_type != -1:
-        # NO SWITCH TYPE FOUND, AMBIGUOUS, ERROR
-        pass
+    # We want this platform to be setup via discovery
+    if discovery_info == None:
+        return
+    type = discovery_info.get(CONF_TYPE)
+    if type == "ALL":
+        entities = []
+        for sensor, attr in SM_SWITCH_MAP.items():
+            for chan in range(int(attr["chan_no"])):
+                entities.append(Switch(
+                    name=sensor+"-"+str(chan+1),
+                    stack=discovery_info.get(CONF_STACK, 0),
+                    type=sensor,
+                    chan=str(chan+1)
+                ))
+        add_devices(entities)
+        return
+    elif type not in SM_SWITCH_MAP:
+        return
     add_devices([Switch(
-		name=config.get(CONF_NAME),
-        stack=config.get(CONF_STACK),
-        type=switch_type,
-        chan=channel
+		name=discovery_info.get(CONF_NAME, ""),
+        stack=discovery_info.get(CONF_STACK, 0),
+        type=discovery_info.get(CONF_TYPE),
+        chan=discovery_info.get(CONF_CHAN)
 	)])
 
 class Switch(SwitchEntity):
