@@ -18,11 +18,11 @@ SMmultiio:
 
 """
 CONFIG_SCHEMA = vol.Schema({
-    DOMAIN: [vol.Schema({
+    DOMAIN: vol.Schema([vol.Schema({
         vol.Optional(CONF_STACK, default="0"): cv.string,
         vol.Optional("rtd_res", default="-1"): cv.string
-    })]
-})
+    })])
+}, extra=vol.ALLOW_EXTRA)
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
