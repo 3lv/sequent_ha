@@ -44,7 +44,7 @@ def setup(hass, config):
                     CONF_TYPE: type,
                     CONF_CHAN: chan
             }
-            _LOGGER.debug("entity_config: %s", entity_config)
+            _LOGGER.error("entity_config: %s", entity_config)
             hass.helpers.discovery.load_platform("sensor", DOMAIN, {}, entity_config)
         
     return True
