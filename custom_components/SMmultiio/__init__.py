@@ -200,7 +200,7 @@ def setup(hass, config):
             except:
                 _LOGGER.error(entity, " doesn't respect type-chan format")
                 continue
-            entity_config = card_config[entity]
+            entity_config = card_config[entity] or {}
             entity_config |= {
                     CONF_NAME: entity,
                     CONF_STACK: stack,
