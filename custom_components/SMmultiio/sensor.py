@@ -19,7 +19,7 @@ from . import DOMAIN
 
 NAME_PREFIX = "multiio"
 CONF_STACK = "stack"
-SM_NUMBER_MAP = {
+SM_SENSOR_MAP = {
         "rtd_res": {
                 "uom": "Ohm",
                 "com": {
@@ -66,7 +66,7 @@ SM_NUMBER_MAP = {
 #	vol.Optional(CONF_NAME, default=""): cv.string,
 #	vol.Optional(CONF_STACK, default="0"): cv.string,
 #}
-#for key in SM_NUMBER_MAP:
+#for key in SM_SENSOR_MAP:
 #    SCHEMA_EXTEND[vol.Optional(key, default="-1")] = cv.string
 #PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SCHEMA_EXTEND)
 
@@ -78,7 +78,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         return
     sensor_type = -1
     channel = -1
-    for key in SM_NUMBER_MAP:
+    for key in SM_SENSOR_MAP:
         val = config.get(key)
         _LOGGER.error(str(val))
         _LOGGER.error(str(config.get(DOMAIN)))
@@ -109,11 +109,11 @@ class Sensor(SensorEntity):
         self._chan = int(chan)
         self._SM = SMmultiio.SMmultiio(self._stack)
         # Altering class so all functions have the same format
-        com = SM_NUMBER_MAP[self._type]["com"]
+        com = SM_SENSOR_MAP[self._type]["com"]
         self._short_timeout = .05
-        self._icons = SM_NUMBER_MAP[self._type]["icon"]
+        self._icons = SM_SENSOR_MAP[self._type]["icon"]
         self._icon = self._icons["off"]
-        self._uom = SM_NUMBER_MAP[self._type]["uom"]
+        self._uom = SM_SENSOR_MAP[self._type]["uom"]
         self._value = 0
         self._SM_get = getattr(self._SM, com["get"])
         if len(signature(self._SM_get).parameters) == 0:
