@@ -159,9 +159,9 @@ SMmultiio:
 """
 
 CONFIG_SCHEMA = vol.Schema({
-    DOMAIN: vol.Schema([vol.Schema({
+    DOMAIN: vol.Schema(vol.Optional([vol.Schema({
         vol.Optional(CONF_STACK, default="0"): cv.string,
-    }, extra=vol.ALLOW_EXTRA)])
+    }, extra=vol.ALLOW_EXTRA)]))
 }, extra=vol.ALLOW_EXTRA)
 
 _LOGGER = logging.getLogger(__name__)
