@@ -5,8 +5,6 @@ import logging
 from homeassistant.helpers import config_validation as cv
 import voluptuous as vol
 
-from sensor import SM_SENSOR_MAP
-
 DOMAIN = "SMmultiio"
 CONF_STACK = "stack"
 
@@ -35,6 +33,6 @@ def setup(hass, config):
     for conf in configs:
         stack = conf.get(CONF_STACK)
         hass.data[DOMAIN][stack] = "cazan"
-        _LOGGER.debug(conf["stack"])
+        _LOGGER.error(conf["stack"])
         
     return True
