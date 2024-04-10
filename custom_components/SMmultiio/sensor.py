@@ -13,12 +13,10 @@ from homeassistant.components.sensor import SensorEntity
 
 from . import (
         DOMAIN, CONF_STACK, CONF_TYPE, CONF_CHAN, CONF_NAME,
+        NAME_PREFIX,
         SM_MAP
 )
 SM_SENSOR_MAP = SM_MAP["sensor"]
-
-NAME_PREFIX = "multiio"
-CONF_STACK = "stack"
 
 #SCHEMA_EXTEND = {
 #	vol.Optional(CONF_NAME, default=""): cv.string,
@@ -60,7 +58,7 @@ class Sensor(SensorEntity):
     """Sequent Microsystems Multiio Sensor"""
     def __init__(self, name, stack, type, chan):
         if name == "":
-            name = NAME_PREFIX + "_" + type + chan
+            name = NAME_PREFIX + str(stack) + "_" + type + "_" + chan
         self._name = name
         self._stack = int(stack)
         self._type = type

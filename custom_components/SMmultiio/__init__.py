@@ -1,9 +1,29 @@
 """Sequent Microsystems Multiio Integration"""
 
 import logging
+import voluptuous as vol
 
 from homeassistant.helpers import config_validation as cv
-import voluptuous as vol
+from homeassistant.const import (
+	CONF_NAME
+)
+
+CONF_NAME = CONF_NAME
+DOMAIN = "SMmultiio"
+NAME_PREFIX = "SMmultiio"
+CONF_STACK = "stack"
+CONF_TYPE = "type"
+CONF_CHAN = "chan"
+
+"""
+SMmultiio:
+    -   stack: 0
+        rtd_res-1:
+            #optional
+            name: super
+        rtd_temp-1:
+"""
+
 
 SM_MAP = {
     "sensor":  {
@@ -141,23 +161,6 @@ SM_MAP = {
 }
 
 
-from homeassistant.const import (
-	CONF_NAME
-)
-
-CONF_NAME = CONF_NAME
-DOMAIN = "SMmultiio"
-CONF_STACK = "stack"
-CONF_TYPE = "type"
-CONF_CHAN = "chan"
-
-"""
-SMmultiio:
-    -   stack: 0
-        rtd_res-1:
-        rtd_temp-1:
-"""
-
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema(vol.Any([vol.Schema({
         vol.Optional(CONF_STACK, default="0"): cv.string,
@@ -203,7 +206,7 @@ def setup(hass, config):
                 continue
             entity_config = card_config[entity] or {}
             entity_config |= {
-                    CONF_NAME: entity,
+                    CONF_NAME: NAME_PREFIX + str(stack) + "_" + entity,
                     CONF_STACK: stack,
                     CONF_TYPE: type,
                     CONF_CHAN: chan

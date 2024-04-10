@@ -8,21 +8,16 @@ _LOGGER = logging.getLogger(__name__)
 
 import multiio as SMmultiio
 
-from homeassistant.const import (
-	CONF_NAME
-)
-
 from homeassistant.components.light import PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.number import NumberEntity
 
 from . import (
         DOMAIN, CONF_STACK, CONF_TYPE, CONF_CHAN, CONF_NAME,
+        NAME_PREFIX,
         SM_MAP
 )
 SM_NUMBER_MAP = SM_MAP["number"]
-
-NAME_PREFIX = "multiio"
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     # We want this platform to be setup via discovery
@@ -54,7 +49,7 @@ class Number(NumberEntity):
     """Sequent Microsystems Multiio Switch"""
     def __init__(self, name, stack, type, chan):
         if name == "":
-            name = NAME_PREFIX + "_" + type + chan
+            name = NAME_PREFIX + str(stack) + "_" + type + "_" + chan
         self._name = name
         self._stack = int(stack)
         self._type = type

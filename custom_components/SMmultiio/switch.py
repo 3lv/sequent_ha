@@ -13,11 +13,10 @@ from homeassistant.components.switch import SwitchEntity
 
 from . import (
         DOMAIN, CONF_STACK, CONF_TYPE, CONF_CHAN, CONF_NAME,
+        NAME_PREFIX,
         SM_MAP
 )
 SM_SWITCH_MAP = SM_MAP["switch"]
-
-NAME_PREFIX = "multiio"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -51,7 +50,7 @@ class Switch(SwitchEntity):
     """Sequent Microsystems Multiio Switch"""
     def __init__(self, name, stack, type, chan):
         if name == "":
-            name = NAME_PREFIX + "_" + type + chan
+            name = NAME_PREFIX + str(stack) + "_" + type + "_" + chan
         self._name = name
         self._stack = int(stack)
         self._type = type
