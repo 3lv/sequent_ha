@@ -5,6 +5,11 @@ import logging
 from homeassistant.helpers import config_validation as cv
 import voluptuous as vol
 
+
+from homeassistant.const import (
+	CONF_NAME
+)
+CONF_NAME = CONF_NAME
 DOMAIN = "SMmultiio"
 CONF_STACK = "stack"
 CONF_TYPE = "type"
@@ -33,6 +38,11 @@ def setup(hass, config):
     card_configs = config.get(DOMAIN)
     for card_config in card_configs:
         stack = int(card_config.pop(CONF_STACK, 0))
+        if not card_config:
+            entity_config = {
+                    CONF_STACK: stack,
+                    CONF_TYPE: "ALL"
+            }
         for entity in card_config:
             try:
                 [type, chan] = entity.rsplit("-", 1)
@@ -40,6 +50,7 @@ def setup(hass, config):
                 _LOGGER.error(entity, " doesn't respect type-chan format")
                 continue
             entity_config = {
+                    CONF_NAME: entity,
                     CONF_STACK: stack,
                     CONF_TYPE: type,
                     CONF_CHAN: chan

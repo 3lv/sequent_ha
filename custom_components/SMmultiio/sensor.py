@@ -7,22 +7,19 @@ from inspect import signature
 
 import multiio as SMmultiio
 
-from homeassistant.const import (
-	CONF_NAME
-)
-
 from homeassistant.components.light import PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import SensorEntity
 
 from . import (
-        DOMAIN, CONF_STACK, CONF_TYPE, CONF_CHAN
+        DOMAIN, CONF_STACK, CONF_TYPE, CONF_CHAN, CONF_NAME
 )
 
 NAME_PREFIX = "multiio"
 CONF_STACK = "stack"
 SM_SENSOR_MAP = {
         "rtd_res": {
+                "chan_no": 2,
                 "uom": "Ohm",
                 "com": {
                     "get": "get_rtd_res",
@@ -33,6 +30,7 @@ SM_SENSOR_MAP = {
                 }
         },
         "rtd_temp": {
+                "chan_no": 2,
                 "uom": "°C",
                 "com": {
                     "get": "get_rtd_temp",
@@ -43,6 +41,7 @@ SM_SENSOR_MAP = {
                 }
         },
         "iin": {
+                "chan_no": 2,
                 "uom": "mA",
                 "com": {
                     "get": "get_i_in",
@@ -53,6 +52,7 @@ SM_SENSOR_MAP = {
                 }
         },
         "uin": {
+                "chan_no": 2,
                 "uom": "V",
                 "com": {
                     "get": "get_i_in",
@@ -80,8 +80,17 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         return
     type = discovery_info.get(CONF_TYPE)
     if type == "ALL":
-        pass # TODO IMPLEMENT
-    if type not in SM_SENSOR_MAP:
+        entities = []
+        for sensor in SM_SENSOR_MAP:
+            for chan in range(int(SM_SENSOR_MAP[sensor]["chan_no"])):
+                entities.append(Sensor(
+                    name=sensor+str(chan),
+                    stack=discovery_info.get(CONF_STACK, 0),
+                    type=sensor,
+                    chan=str(chan)
+                ))
+        add_devices(entities)
+    elif type not in SM_SENSOR_MAP:
         return
     _LOGGER.error("config: %s", discovery_info)
     add_devices([Sensor(
