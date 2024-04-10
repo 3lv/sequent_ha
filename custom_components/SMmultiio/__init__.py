@@ -36,6 +36,13 @@ _LOGGER.setLevel(logging.DEBUG)
 def setup(hass, config):
     hass.data[DOMAIN] = []
     card_configs = config.get(DOMAIN)
+    if not card_configs:
+        entity_config = {
+                CONF_STACK: 0,
+                CONF_TYPE: "ALL"
+        }
+        hass.helpers.discovery.load_platform("sensor", DOMAIN, entity_config, config)
+        return
     for card_config in card_configs:
         stack = int(card_config.pop(CONF_STACK, 0))
         if not card_config:
