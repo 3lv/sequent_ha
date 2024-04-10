@@ -54,6 +54,7 @@ SM_MAP = {
     },
     "switch": {
         "led": {
+                "chan_no": 6,
                 "com": {
                     "get": "get_led",
                     "set": "set_led"
@@ -64,6 +65,7 @@ SM_MAP = {
                 }
         },
         "relay": {
+                "chan_no": 2,
                 "com": {
                     "get": "get_relay",
                     "set": "set_relay"
@@ -76,6 +78,7 @@ SM_MAP = {
     },
     "number": {
         "uout": {
+                "chan_no": 2,
                 "uom": "V",
                 "min_value": 0.0,
                 "max_value": 10.0,
@@ -90,6 +93,7 @@ SM_MAP = {
                 }
         },
         "iout": {
+                "chan_no": 2,
                 "uom": "mA",
                 "min_value": 4.0,
                 "max_value": 20.0,
@@ -104,6 +108,7 @@ SM_MAP = {
                 }
         },
         "servo": {
+                "chan_no": 2,
                 "uom": "%",
                 "min_value": -140.0,
                 "max_value": +140.0,
@@ -118,6 +123,7 @@ SM_MAP = {
                 }
         },
         "motor": {
+                "chan_no": 1,
                 "uom": "%",
                 "min_value": -100.0,
                 "max_value": +100.0,
