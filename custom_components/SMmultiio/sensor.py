@@ -84,10 +84,10 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         for sensor in SM_SENSOR_MAP:
             for chan in range(int(SM_SENSOR_MAP[sensor]["chan_no"])):
                 entities.append(Sensor(
-                    name=sensor+str(chan),
+                    name=sensor+str(chan+1),
                     stack=discovery_info.get(CONF_STACK, 0),
                     type=sensor,
-                    chan=str(chan)
+                    chan=str(chan+1)
                 ))
         add_devices(entities)
     elif type not in SM_SENSOR_MAP:
