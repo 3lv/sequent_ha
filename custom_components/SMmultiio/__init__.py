@@ -7,10 +7,7 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.const import (
 	CONF_NAME
 )
-
 CONF_NAME = CONF_NAME
-DOMAIN = "SMmultiio"
-NAME_PREFIX = "SMmultiio"
 CONF_STACK = "stack"
 CONF_TYPE = "type"
 CONF_CHAN = "chan"
@@ -24,7 +21,8 @@ SMmultiio:
         rtd_temp-1:
 """
 
-
+DOMAIN = "SMmultiio"
+NAME_PREFIX = "SMmultiio"
 SM_MAP = {
     "sensor":  {
         "rtd_res": {

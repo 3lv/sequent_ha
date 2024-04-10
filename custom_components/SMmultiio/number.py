@@ -26,11 +26,12 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     type = discovery_info.get(CONF_TYPE)
     if type == "ALL":
         entities = []
+        stack=discovery_info.get(CONF_STACK, 0),
         for sensor, attr in SM_NUMBER_MAP.items():
             for chan in range(int(attr["chan_no"])):
                 entities.append(Number(
-                    name=sensor+"_"+str(chan+1),
-                    stack=discovery_info.get(CONF_STACK, 0),
+                    name=NAME_PREFIX+str(stack)+"_"+sensor+"_"+str(chan+1),
+                    stack=stack,
                     type=sensor,
                     chan=str(chan+1)
                 ))
